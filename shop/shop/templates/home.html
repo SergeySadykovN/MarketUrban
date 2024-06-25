@@ -1,0 +1,14 @@
+<!-- shop/templates/home.html -->
+
+
+{% extends 'base.html' %}
+
+{% block title %}Home - My Shop{% endblock %}
+
+{% block content %}
+    <div class="jumbotron text-center">
+        <h1>Welcome to UrbanMarket</h1>
+        <p>Лучшее место для покупки вещей</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'product_list' %}" role="button">В магазин</a>
+    </div>
+{% endblock %}

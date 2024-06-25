@@ -1,0 +1,13 @@
+<!-- shop/templates/profile.html -->
+{% extends 'base.html' %}
+
+{% block title %}Profile - My Shop{% endblock %}
+
+{% block content %}
+    <h2>User Profile</h2>
+    <p>Username: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+{% endblock %}
+
