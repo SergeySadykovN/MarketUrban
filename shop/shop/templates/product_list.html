@@ -1,22 +1,24 @@
+<!-- shop/templates/product_list.html -->
 {% extends 'base.html' %}
 
 {% block title %}Product List{% endblock %}
 
 {% block content %}
-    <h2>Product List</h2>
+    <h2>Каталог товаров</h2>
     <!-- Форма для поиска -->
     <form class="form-inline mb-3" method="get" action="{% url 'product_list' %}">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Search products..." name="q" value="{{ request.GET.q }}">
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="submit">Search</button>
+                <button class="btn btn-outline-secondary" type="submit">Поиск</button>
             </div>
         </div>
     </form>
 
+
     <div class="row">
         <div class="col-md-3">
-            <h4>Categories</h4>
+            <h4>Категории</h4>
             <ul class="list-group">
                 <li class="list-group-item {% if not category_id %}active{% endif %}">
                     <a href="{% url 'product_list' %}">All</a>
@@ -37,7 +39,7 @@
                                 <h5 class="card-title">{{ product.name }}</h5>
                                 <p class="card-text">{{ product.price }}</p>
                                 <p class="card-text">{{ product.description|truncatewords:10 }}</p>
-                                <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">View Details</a>
+                                <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">Подробнее</a>
                             </div>
                         </div>
                     </div>

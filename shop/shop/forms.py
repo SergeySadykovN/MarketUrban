@@ -11,3 +11,14 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2', )
+
+
+CHOICES_PAYMENT = (
+    ('Card', 'Кредитная карта'),
+    ('COD', 'Наличные при получении'),
+)
+
+class CheckoutForm(forms.Form):
+    delivery_address = forms.CharField(label='Адрес доставки', max_length=100)
+    phone_number = forms.CharField(label='Номер телефона', max_length=15)
+    payment_option = forms.ChoiceField(label='Метод оплаты', choices=CHOICES_PAYMENT)

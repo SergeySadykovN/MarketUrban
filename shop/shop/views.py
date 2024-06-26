@@ -1,16 +1,19 @@
 # shop/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm
-from .forms import SignUpForm
-from .models import Product, Cart, CartItem, Category
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from .forms import SignUpForm, CheckoutForm
+from django.contrib import messages
+
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Product, Cart, CartItem
+from .models import Product, Cart, CartItem, Category, Order
 
 from django.db.models import Q
+from django.urls import reverse
+
 
 
 def product_list(request, category_id=None):
@@ -34,14 +37,21 @@ def product_list(request, category_id=None):
 @login_required
 def update_cart(request):
     if request.method == 'POST':
-        product_id = request.POST.get('product_id')
-        quantity = int(request.POST.get('quantity'))
-        product = Product.objects.get(id=product_id)
-        cart, created = Cart.objects.get_or_create(user=request.user)
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-        cart_item.quantity = quantity
-        cart_item.save()
-    return redirect('cart_detail')
+        cart = Cart.objects.get(user=request.user)
+
+        # Обрабатываем каждый товар в корзине
+        for item in cart.items.all():
+            # Получаем новое количество товара из POST-запроса
+            quantity = int(request.POST.get(f'quantity_{item.id}'))
+            # Устанавливаем новое количество товара в корзине
+            item.quantity = quantity
+            item.save()
+
+        # Перенаправляем пользователя обратно на страницу корзины
+        return redirect('cart_detail')
+
+    # Если метод запроса не POST, перенаправляем на домашнюю страницу
+    return redirect('home')
 
 
 @login_required
@@ -59,6 +69,47 @@ def add_to_cart(request, product_id):
         cart_item.quantity += 1
         cart_item.save()
     return redirect('cart_detail')
+
+
+@login_required
+def remove_from_cart(request, product_id):
+    cart = Cart.objects.get(user=request.user)
+    product = get_object_or_404(Product, id=product_id)
+    cart_item = CartItem.objects.get(cart=cart, product=product)
+    cart_item.delete()
+    return redirect('cart_detail')
+
+
+@login_required
+def checkout(request):
+    cart = Cart.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            delivery_address = form.cleaned_data['delivery_address']
+            phone_number = form.cleaned_data['phone_number']
+            payment_option = form.cleaned_data['payment_option']
+
+            # Создание нового заказа
+            order = Order.objects.create(
+                user=request.user,
+                total_cost=cart.get_total_cost()
+            )
+            order.items.set(cart.items.all())  # Добавляем товары из корзины в заказ
+
+            # # Очистка корзины
+            # cart.items.clear()
+
+            return redirect(reverse('order_success', args=[order.id]))  # Перенаправление на страницу успешного оформления заказа
+    else:
+        form = CheckoutForm()
+
+    return render(request, 'checkout.html', {'form': form})
+
+def order_success(request, order_id):
+    order = Order.objects.get(id=order_id)  # Получаем объект заказа по его ID
+    return render(request, 'order_success.html', {'order': order})
 
 
 def product_list(request, category_id=None):
@@ -81,7 +132,25 @@ def home(request):
 
 @login_required
 def profile(request):
-    return render(request, 'profile.html')
+    return render(request, 'profile.html', {'user': request.user})
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # обновляем сессию пользователя, чтобы он не был разлогинен
+            messages.success(request, 'Ваш пароль успешно изменен!')
+            return redirect('profile')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {'form': form})
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'order_history.html', {'orders': orders})
 
 
 def signup(request):

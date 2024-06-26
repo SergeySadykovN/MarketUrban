@@ -4,16 +4,17 @@
 {% block title %}Cart - My Shop{% endblock %}
 
 {% block content %}
-    <h2>Your Cart</h2>
+    <h2>Ваша корзина</h2>
     <form method="post" action="{% url 'update_cart' %}">
         {% csrf_token %}
         <table class="table">
             <thead>
                 <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
+                    <th>Товар</th>
+                    <th>Цена</th>
+                    <th>Количество</th>
+                    <th>Всего</th>
+                    <th>Удалить</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,15 +23,22 @@
                         <td>{{ item.product.name }}</td>
                         <td>{{ item.product.price }}</td>
                         <td>
-                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
-                            <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                            <input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1">
+                            <input type="hidden" name="product_id_{{ item.id }}" value="{{ item.product.id }}">
                         </td>
                         <td>{{ item.get_cost }}</td>
+                        <td>
+                            <a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit" class="btn btn-primary">Update Cart</button>
+        <button type="submit" class="btn btn-primary">Обновить количество</button>
     </form>
-    <h3>Total: {{ cart.get_total_cost }}</h3>
+
+    <h3>Сумма: {{ cart.get_total_cost }}</h3>
+
+    <a href="{% url 'checkout' %}" class="btn btn-success">Оформить заказ</a>
+
 {% endblock %}

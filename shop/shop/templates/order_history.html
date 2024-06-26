@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Order History - My Shop{% endblock %}
+
+{% block content %}
+    <h2>История ваших заказов</h2>
+    <ul>
+        {% for order in orders %}
+            <li>
+                <strong>Заказ №{{ order.id }}</strong>
+                <p>Дата и время: {{ order.created_at }}</p>
+                <p>Сумма заказа: {{ order.total_cost }}</p>
+            </li>
+        {% empty %}
+            <li>У вас пока нет заказов.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
