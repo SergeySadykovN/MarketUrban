@@ -1,22 +1,25 @@
 # shop/views.py
+from typing import Optional
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from .forms import SignUpForm, CheckoutForm
 from django.contrib import messages
-
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Product, Cart, CartItem, Category, Order
-
 from django.db.models import Q
 from django.urls import reverse
+from .models import Product, Cart, CartItem, Category, Order
 
 
+def product_list(request: HttpRequest, category_id: Optional[int] = None) -> HttpResponse:
+    """
+    Возвращает список продуктов, возможно фильтрованный по категории и поисковому запросу.
 
-def product_list(request, category_id=None):
+    :param request: HttpRequest объект
+    :param category_id: Идентификатор категории для фильтрации (необязательно)
+    :return: HttpResponse с отрендеренным шаблоном product_list.html
+    """
     categories = Category.objects.all()
     products = Product.objects.all()
     query = request.GET.get('q')
@@ -35,7 +38,13 @@ def product_list(request, category_id=None):
 
 
 @login_required
-def update_cart(request):
+def update_cart(request: HttpRequest) -> HttpResponse:
+    """
+    Обновляет количество товаров в корзине для текущего пользователя.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse перенаправление на страницу корзины
+    """
     if request.method == 'POST':
         cart = Cart.objects.get(user=request.user)
 
@@ -55,13 +64,26 @@ def update_cart(request):
 
 
 @login_required
-def cart_detail(request):
+def cart_detail(request: HttpRequest) -> HttpResponse:
+    """
+    Возвращает детали корзины для текущего пользователя.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse с отрендеренным шаблоном cart_detail.html
+    """
     cart, created = Cart.objects.get_or_create(user=request.user)
     return render(request, 'cart_detail.html', {'cart': cart})
 
 
 @login_required
-def add_to_cart(request, product_id):
+def add_to_cart(request: HttpRequest, product_id: int) -> HttpResponse:
+    """
+    Добавляет товар в корзину текущего пользователя.
+
+    :param request: HttpRequest объект
+    :param product_id: Идентификатор добавляемого товара
+    :return: HttpResponse перенаправление на страницу корзины
+    """
     product = get_object_or_404(Product, id=product_id)
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
@@ -72,7 +94,14 @@ def add_to_cart(request, product_id):
 
 
 @login_required
-def remove_from_cart(request, product_id):
+def remove_from_cart(request: HttpRequest, product_id: int) -> HttpResponse:
+    """
+    Удаляет товар из корзины текущего пользователя.
+
+    :param request: HttpRequest объект
+    :param product_id: Идентификатор удаляемого товара
+    :return: HttpResponse перенаправление на страницу корзины
+    """
     cart = Cart.objects.get(user=request.user)
     product = get_object_or_404(Product, id=product_id)
     cart_item = CartItem.objects.get(cart=cart, product=product)
@@ -81,7 +110,13 @@ def remove_from_cart(request, product_id):
 
 
 @login_required
-def checkout(request):
+def checkout(request: HttpRequest) -> HttpResponse:
+    """
+    Оформляет заказ для текущего пользователя.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse с отрендеренным шаблоном checkout.html или перенаправление на страницу успеха заказа
+    """
     cart = Cart.objects.get(user=request.user)
 
     if request.method == 'POST':
@@ -107,35 +142,60 @@ def checkout(request):
 
     return render(request, 'checkout.html', {'form': form})
 
-def order_success(request, order_id):
+
+def order_success(request: HttpRequest, order_id: int) -> HttpResponse:
+    """
+    Отображает страницу успешного оформления заказа.
+
+    :param request: HttpRequest объект
+    :param order_id: Идентификатор заказа
+    :return: HttpResponse с отрендеренным шаблоном order_success.html
+    """
     order = Order.objects.get(id=order_id)  # Получаем объект заказа по его ID
     return render(request, 'order_success.html', {'order': order})
 
 
-def product_list(request, category_id=None):
-    categories = Category.objects.all()
-    products = Product.objects.all()
-    if category_id:
-        products = products.filter(category_id=category_id)
-    return render(request, 'product_list.html',
-                  {'products': products, 'categories': categories, 'category_id': category_id})
+def product_detail(request: HttpRequest, pk: int) -> HttpResponse:
+    """
+    Отображает детали конкретного продукта.
 
-
-def product_detail(request, pk):
+    :param request: HttpRequest объект
+    :param pk: Идентификатор продукта
+    :return: HttpResponse с отрендеренным шаблоном product_detail.html
+    """
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'product_detail.html', {'product': product})
 
 
-def home(request):
+def home(request: HttpRequest) -> HttpResponse:
+    """
+    Отображает домашнюю страницу.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse с отрендеренным шаблоном home.html
+    """
     return render(request, 'home.html')
 
 
 @login_required
-def profile(request):
+def profile(request: HttpRequest) -> HttpResponse:
+    """
+    Отображает профиль текущего пользователя.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse с отрендеренным шаблоном profile.html
+    """
     return render(request, 'profile.html', {'user': request.user})
 
+
 @login_required
-def change_password(request):
+def change_password(request: HttpRequest) -> HttpResponse:
+    """
+    Позволяет пользователю сменить пароль.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse с отрендеренным шаблоном change_password.html
+    """
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
@@ -147,13 +207,26 @@ def change_password(request):
         form = PasswordChangeForm(request.user)
     return render(request, 'change_password.html', {'form': form})
 
+
 @login_required
-def order_history(request):
+def order_history(request: HttpRequest) -> HttpResponse:
+    """
+    Отображает историю заказов текущего пользователя.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse с отрендеренным шаблоном order_history.html
+    """
     orders = Order.objects.filter(user=request.user)
     return render(request, 'order_history.html', {'orders': orders})
 
 
-def signup(request):
+def signup(request: HttpRequest) -> HttpResponse:
+    """
+    Регистрирует нового пользователя.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse с отрендеренным шаблоном signup.html
+    """
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -168,7 +241,13 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
-def login_view(request):
+def login_view(request: HttpRequest) -> HttpResponse:
+    """
+    Авторизует пользователя.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse с отрендеренным шаблоном login.html
+    """
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -183,6 +262,12 @@ def login_view(request):
     return render(request, 'login.html', {'form': form})
 
 
-def logout_view(request):
+def logout_view(request: HttpRequest) -> HttpResponse:
+    """
+    Выход пользователя из системы.
+
+    :param request: HttpRequest объект
+    :return: HttpResponse перенаправление на домашнюю страницу
+    """
     logout(request)
     return redirect('home')

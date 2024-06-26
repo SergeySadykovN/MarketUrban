@@ -30,7 +30,11 @@ class Cart(models.Model):
     def __str__(self):
         return f'Cart of {self.user.username}'
 
-    def get_total_cost(self):
+    def get_total_cost(self) -> float:
+        """
+        Возвращает общую стоимость товаров в корзине.
+        :return: Общая стоимость
+        """
         return sum(item.get_cost() for item in self.items.all())
 
 
@@ -42,7 +46,11 @@ class CartItem(models.Model):
     def __str__(self):
         return f'{self.quantity} of {self.product.name}'
 
-    def get_cost(self):
+    def get_cost(self) -> float:
+        """
+        Возвращает стоимость текущего товара в корзине.
+        :return: Стоимость товара
+        """
         return self.product.price * self.quantity
 
 
