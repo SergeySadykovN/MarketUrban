@@ -66,5 +66,15 @@ body {
     color: #fff; /* Цвет текста активного элемента */
     background-color: #A8D1AB; /* Цвет фона активного элемента */
     border-color: #A8D1AB; /* Цвет рамки активного элемента */
+}
 
+/* Стиль для баннера */
+#welcome-banner {
+    background-image: url("https://tapety.tja.pl/obrazki/tja_normalne/122790.jpg"); /* Путь к вашему изображению */
+    background-size: cover;
+    background-position: center;
+    color: white; /* Цвет текста */
+    padding: 100px 20px; /* Отступы */
+    border-radius: 10px;
+}
 
