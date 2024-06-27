@@ -136,7 +136,8 @@ def checkout(request: HttpRequest) -> HttpResponse:
             # # Очистка корзины
             # cart.items.clear()
 
-            return redirect(reverse('order_success', args=[order.id]))  # Перенаправление на страницу успешного оформления заказа
+            return redirect(
+                reverse('order_success', args=[order.id]))  # Перенаправление на страницу успешного оформления заказа
     else:
         form = CheckoutForm()
 

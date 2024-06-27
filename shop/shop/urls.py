@@ -1,4 +1,5 @@
-#shop/urls.py
+# shop/urls.py
+
 from django.contrib import admin
 from django.urls import path
 from . import views
@@ -13,7 +14,7 @@ urlpatterns = [
     path('profile/change_password/', views.change_password, name='change_password'),
     path('profile/order_history/', views.order_history, name='order_history'),
     path('products/', views.product_list, name='product_list'),
-    path('products/category/<int:category_id>/', views.product_list, name='product_list_by_category'),  # Фильтрация по категориям
+    path('products/category/<int:category_id>/', views.product_list, name='product_list_by_category'),
     path('products/<int:pk>/', views.product_detail, name='product_detail'),
     path('cart/', views.cart_detail, name='cart_detail'),
     path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
@@ -22,5 +23,10 @@ urlpatterns = [
     path('search/', views.product_list, name='product_search'),
     path('checkout/', views.checkout, name='checkout'),
     path('checkout/order_success/<int:order_id>/', views.order_success, name='order_success'),
-
 ]
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

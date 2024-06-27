@@ -4,15 +4,21 @@
 {% block title %}{{ product.name }} - My Shop{% endblock %}
 
 {% block content %}
+    <a href="{% url 'product_list' %}" class="nav-link"><-- Назад к списку товаров</a>
     <h1>{{ product.name }}</h1>
+    {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; height: auto;">
+    {% else %}
+        <p>No image available</p>
+    {% endif %}
     <p><strong>Price:</strong> {{ product.price }} $</p>
     <p>{{ product.description }}</p>
     <form action="{% url 'add_to_cart' product.id %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-success">Add to Cart</button>
+        <button type="submit" class="btn btn-success">В корзину</button>
     </form>
-    <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">Back to Product List</a>
-    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Home</a>
-{% endblock %}
 
+<!--    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Главная</a>-->
+
+{% endblock %}
 

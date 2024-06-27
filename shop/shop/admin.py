@@ -10,6 +10,9 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_filter = ('category',)
 
+    fields = ('name', 'price', 'description', 'category', 'image', 'created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at')
+
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
