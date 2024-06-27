@@ -1,0 +1,70 @@
+#shop/static/css/styles.css
+body {
+    /* Настройки для фона и размера шрифта */
+    background-image: url('https://bogatyr.club/uploads/posts/2023-01/1674956243_bogatyr-club-p-gradient-ot-zheltogo-k-zelenomu-fon-krasiv-66.jpg'); /* Путь к изображению фона */
+    background-size: cover;
+    background-position: center;
+    font-size: 16px;
+}
+
+.navbar {
+    background-color: #ffffff; /* Белый фон для навигационной панели */
+}
+
+.navbar-brand,
+.nav-link {
+    color: #1E3E21; /* Синий цвет текста для ссылок в навигационной панели */
+}
+
+.btn-primary {
+    background-color: #0e6e45; /* Синий цвет для кнопок с классом btn-primary */
+    border-color: #0e6e45; /* Цвет рамки для кнопок с классом btn-primary */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Темно-синий цвет при наведении для кнопок с классом btn-primary */
+    border-color: #0056b3; /* Цвет рамки при наведении для кнопок с классом btn-primary */
+}
+
+.btn-danger {
+    background-color: #dc3545; /* Красный цвет для кнопок с классом btn-danger */
+    border-color: #dc3545; /* Цвет рамки для кнопок с классом btn-danger */
+}
+
+.btn-danger:hover {
+    background-color: #c82333; /* Темно-красный цвет при наведении для кнопок с классом btn-danger */
+    border-color: #c82333; /* Цвет рамки при наведении для кнопок с классом btn-danger */
+}
+
+
+/* Стили для активного пункта меню */
+.navbar .navbar-nav .nav-item.active .nav-link {
+    color: #ffffff; /* Цвет текста */
+    background-color: #00FF87; /* Цвет фона */
+}
+
+/* Измените цвета по вашему выбору */
+.categories .nav-item.active .nav-link {
+    background-color: #008000; /* Замените на ваш желаемый цвет */
+    color: #008000; /* Замените на ваш желаемый цвет текста */
+}
+
+/* Стиль для всех элементов списка */
+.list-group-item {
+    color: #142415; /* Цвет текста */
+    background-color: #f8f9fa; /* Цвет фона */
+    border: 1px solid #ddd; /* Цвет рамки */
+}
+
+.list-group-item:hover {
+    color: #142415; /* Цвет текста при наведении */
+    background-color: #58935D; /* Цвет фона при наведении */
+}
+
+/* Стиль для активного элемента списка */
+.list-group-item.active {
+    color: #fff; /* Цвет текста активного элемента */
+    background-color: #A8D1AB; /* Цвет фона активного элемента */
+    border-color: #A8D1AB; /* Цвет рамки активного элемента */
+
+
