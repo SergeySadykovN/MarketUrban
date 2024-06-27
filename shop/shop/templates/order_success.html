@@ -8,5 +8,5 @@
     <p>Номер заказа: {{ order.id }}</p>
     <p>Дата и время заказа: {{ order.updated_at }}</p>
     <p>Сумма заказа: {{ order.total_cost }}</p>
-
+    <a href="{% url 'product_list' %}" class="nav-link"><-- Назад к списку товаров</a>
 {% endblock %}
